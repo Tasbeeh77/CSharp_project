@@ -27,7 +27,7 @@ namespace client
             client.Connect(IPAddress.Parse("127.0.0.1"), 5500);
             NetworkStream nStream= client.GetStream();
             BinaryWriter binaryWriter= new BinaryWriter(nStream);
-            binaryWriter.Write(UserName);
+            binaryWriter.Write($"{UserName}|signIn");
         }
         private void button1_Click(object sender, EventArgs e)
         {

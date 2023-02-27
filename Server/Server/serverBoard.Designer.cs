@@ -128,7 +128,7 @@
             this.label2.Font = new System.Drawing.Font("Microsoft Sans Serif", 19.8F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.label2.Location = new System.Drawing.Point(12, 494);
             this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(331, 39);
+            this.label2.Size = new System.Drawing.Size(321, 38);
             this.label2.TabIndex = 6;
             this.label2.Text = "Number of players: ";
             // 
@@ -148,6 +148,7 @@
             this.Name = "serverBoard";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "Server";
+            this.Leave += new System.EventHandler(this.serverBoard_Leave);
             this.ResumeLayout(false);
             this.PerformLayout();
 

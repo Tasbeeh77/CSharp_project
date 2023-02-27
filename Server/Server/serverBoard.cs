@@ -24,7 +24,9 @@ namespace Server
         BinaryWriter binWriter;
         NetworkStream nstream;
         Socket Connection;
+        string[] streamData =new string[10];
         List<User> users = new List<User>();
+        List<Room> availableRooms = new List<Room>();
         bool flag = true;
         public static int playerId { get; set; }
         public serverBoard()
@@ -36,24 +38,46 @@ namespace Server
             IPAddress localaddr = new IPAddress(new byte[] { 127, 0, 0, 1 });
             listener = new TcpListener(localaddr, 5500);
             listener.Start();
-            MessageBox.Show("started...");
+            //MessageBox.Show("started...");
             playerId= 0;
-
             Thread myThread = new Thread(() => {
                 while (flag)
                 {
-                Connection = listener.AcceptSocket();
-                nstream = new NetworkStream(Connection);
-                binReader = new BinaryReader(nstream);
-                string name= binReader.ReadString();
-                users.Add(new User(playerId++, name));
-                listView1.Items.Add(new ListViewItem($"CLIENT Name = {name} & Id = {playerId}"));
-                label2.Text = $"Number of players: {users.Count}";
-                binWriter = new BinaryWriter(nstream);
-                binWriter.Write("Connected");
+                    Connection = listener.AcceptSocket();
+                    nstream = new NetworkStream(Connection);
+                    binReader = new BinaryReader(nstream);
+                    string data = binReader.ReadString();
+                    streamData = data.Split('|');
+                    //MessageBox.Show(streamData[1]);
+                    if (streamData[1] == "signIn") 
+                    {
+                        signIn();
+                    }
+                    else if (streamData[4] == "createRoom")
+                    {
+                        createRoomRequest();
+                    }
+                    
                 } 
             });
             myThread.Start();
+        }
+        void signIn()
+        {
+            users.Add(new User(playerId++, streamData[0]));
+            listView1.Items.Add(new ListViewItem($"CLIENT Name = {streamData[0]} & Id = {playerId}"));
+            label2.Text = $"Number of players: {users.Count}";
+            binWriter = new BinaryWriter(nstream);
+            binWriter.Write("Connected");
+        }
+        void createRoomRequest()
+        {
+            Room room= new Room(streamData[0], int.Parse(streamData[1]), int.Parse(streamData[2]), streamData[3],1);
+            availableRooms.Add(room);
+            foreach (var item in streamData)
+            { 
+              listView1.Items.Add(new ListViewItem($"Room Data = {item} "));
+            }
         }
 
         private void button1_Click(object sender, EventArgs e)
@@ -75,6 +99,16 @@ namespace Server
             Connection.Shutdown(SocketShutdown.Both);
             Connection.Close();
             flag= false;
+        }
+
+        private void serverBoard_Leave(object sender, EventArgs e)
+        {
+            binReader.Close();
+            binWriter.Close();
+            nstream.Close();
+            Connection.Shutdown(SocketShutdown.Both);
+            Connection.Close();
+            flag = false;
         }
     }
 }

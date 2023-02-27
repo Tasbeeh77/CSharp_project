@@ -16,13 +16,14 @@ namespace client
         List<TextBox> textBoxes= new List<TextBox>();
         List<Button> JoinButtons = new List<Button>();
         List<Button> watchButtons = new List<Button>();
-
+        public static List<TextBox> TextBoxes
+        {
+            get{return TextBoxes;}
+        }
         public Roomgame()
         {
             InitializeComponent();   
         }
-
-
         private void button3_Click(object sender, EventArgs e)
         {
             Thread thr = new Thread(() => Application.Run(new CreateRoom()));
@@ -54,8 +55,6 @@ namespace client
             watch.Click += Watch_Click;
             watchButtons.Add(watch);
             this.Controls.Add(watch);
-
-
         }
 
         private void Watch_Click(object sender, EventArgs e)
