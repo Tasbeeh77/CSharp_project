@@ -1,0 +1,12 @@
+D:\ITI\C#\connect4game\Server\Server\bin\Debug\Server.exe.config
+D:\ITI\C#\connect4game\Server\Server\bin\Debug\Server.exe
+D:\ITI\C#\connect4game\Server\Server\bin\Debug\Server.pdb
+D:\ITI\C#\connect4game\Server\Server\obj\Debug\Server.csproj.AssemblyReference.cache
+D:\ITI\C#\connect4game\Server\Server\obj\Debug\Server.csproj.SuggestedBindingRedirects.cache
+D:\ITI\C#\connect4game\Server\Server\obj\Debug\Server.Properties.Resources.resources
+D:\ITI\C#\connect4game\Server\Server\obj\Debug\Server.serverBoard.resources
+D:\ITI\C#\connect4game\Server\Server\obj\Debug\Server.csproj.GenerateResource.cache
+D:\ITI\C#\connect4game\Server\Server\obj\Debug\Server.csproj.CoreCompileInputs.cache
+D:\ITI\C#\connect4game\Server\Server\obj\Debug\Server.exe
+D:\ITI\C#\connect4game\Server\Server\obj\Debug\Server.pdb
+D:\ITI\C#\connect4game\Server\Server\obj\Debug\Server.Details.resources
