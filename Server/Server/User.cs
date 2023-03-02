@@ -25,7 +25,7 @@ namespace Server
 
         public int Id { get; set; }
         public string UserName { get; set; }
-        public static string Color { get; set; }
+        public string Color { get; set; }
         public static string CurrentRoom { get; set; }
         StreamReader Reader;
         StreamWriter Writer;
@@ -48,8 +48,10 @@ namespace Server
                 if(nstream!=null)
                 {
                     string value =await Reader.ReadLineAsync();
+                    //MessageBox.Show(value);
                     streamData = value.Split('|');
                     newClientMessage(this, Writer, Reader, streamData, userConnection); //publish event
+                   //MessageBox.Show(value+"after event");
                     nstream.Flush();
                 }
             }

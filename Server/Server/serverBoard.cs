@@ -1,4 +1,5 @@
 ﻿using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -55,7 +56,21 @@ namespace Server
         }
         private void Item_newClientMessage(object sender, StreamWriter Writer, StreamReader Reader, string[] streamData, Socket Connection)
         {
-            if (streamData[1] == "signIn")
+            if (streamData[0] == "Close")
+            {
+                Writer.Close();
+                Reader.Close();
+                Connection.Close();
+            }
+            else if (streamData[0]=="join")
+            {
+                joinGameRequest(streamData);
+            }
+            else if (streamData[0] == "watch")
+            {
+                watchGameRequest(streamData);
+            }
+            else if (streamData[1] == "signIn")
             {
                 signIn(streamData, Writer);
             }
@@ -63,14 +78,21 @@ namespace Server
             {
                 createRoomRequest(streamData);
             }
-            else if (streamData[0] == "Close")
-            {
-                Writer.Close();
-                Reader.Close();
-                Connection.Close();
-            }
         }
-
+        private void watchGameRequest(string[] streamData)
+        {
+            int roomIndex = int.Parse(streamData[1])-1;
+            availableRooms[roomIndex].watchers.Add(users[users.Count - 1]);
+            MessageBox.Show("watch data done");
+        }
+        private void joinGameRequest(string[] streamData)
+        {
+            int roomIndex = int.Parse(streamData[1])-1;
+            availableRooms[roomIndex].player2Name = streamData[2];
+            availableRooms[roomIndex].players.Add(users[users.Count - 1]);
+            availableRooms[roomIndex].setPlayer2Color();
+            MessageBox.Show("join data done");
+        }
         public void signIn(string[] streamData,StreamWriter Writer)
         {
             users[playerId].Id = playerId;
@@ -81,7 +103,7 @@ namespace Server
         }
         public void createRoomRequest(string[] streamData)
         {
-            Room room= new Room(streamData[0], int.Parse(streamData[1]), int.Parse(streamData[2]), streamData[3],1,users);
+            Room room= new Room(streamData[0], int.Parse(streamData[1]), int.Parse(streamData[2]), streamData[3],1, users[users.Count - 1]);
             availableRooms.Add(room);
             foreach (var item in streamData)
             {

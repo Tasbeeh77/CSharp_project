@@ -16,13 +16,13 @@ namespace client
         NetworkStream nStream;
         static StreamReader Reader;
         static StreamWriter Writer;
-        public Connection() 
+        public Connection()
         {
             client = new TcpClient();
             client.Connect("127.0.0.1", 1025);
             nStream = client.GetStream();
             Writer = new StreamWriter(nStream);
-            Writer.AutoFlush= true;
+            Writer.AutoFlush = true;
             Reader = new StreamReader(nStream);
         }
         public void sendUserName(string UserName)
@@ -31,12 +31,20 @@ namespace client
         }
         public static void sendRoomData(string Player1color)
         {
-           Writer.WriteLine($"{start.UserName}|{CreateRoom.Row}|{CreateRoom.Col}|{Player1color}|createRoom");
+            Writer.WriteLine($"{start.UserName}|{CreateRoom.Row}|{CreateRoom.Col}|{Player1color}|createRoom");
         }
         public static StreamReader displayRooms()
         {
             return Reader;
-        } 
+        }
+        public static void join(string RoomNo)
+        {
+            Writer.WriteLine($"join|{RoomNo}|{start.UserName}");
+        }
+        public static void watch(string RoomNo)
+        {
+            Writer.WriteLine($"watch|{RoomNo}|{start.UserName}");
+        }
         public static void ClosingForm()
         {
             Writer.WriteLine($"Close|send");

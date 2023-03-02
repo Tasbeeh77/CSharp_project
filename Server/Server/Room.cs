@@ -5,23 +5,40 @@ namespace Server
     public class Room
     {
         public string player1Name { get; set; }
+        public string player2Name { get; set; }
         public int row { get; set; }
         public int col { get; set; }
-        string player1Color;
+        public string player1Color { get; set; }
+        string player2Color;
         public int roomIndex { get; set; }
         public List <User> players { get; set; }
+        public List<User> watchers { get; set; }
         public Room()
         {
             roomIndex = 0;
         }
-        public Room(string player1Name,int row, int col, string player1Color,int roomIndex, List<User> users)
+        public Room(string player1Name,int row, int col, string player1Color,int roomIndex,User player1)
         {
             this.player1Name = player1Name;
             this.row = row; 
             this.col = col;
             this.player1Color = player1Color;
+            player1.Color = player1Color;
             this.roomIndex = roomIndex;
-            this.players = users;
+            players = new List<User> { player1 };
+        }
+        public void setPlayer2Color()
+        {
+            if(player1Color=="red")
+            {
+                player2Color = "yellow";
+                players[1].Color = "yellow";
+            }
+            else
+            {
+                player2Color = "red";
+                players[1].Color = "red";
+            }
         }
     }
 }

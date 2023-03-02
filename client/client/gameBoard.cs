@@ -107,7 +107,7 @@ namespace client
                     {
                         string player = (winner == 1) ? "Red" : "Yellow";
                         MessageBox.Show("Congratulations!" + player + " Player has won");
-                        Application.Restart();
+                       // Application.Restart();
 
                     }
                     if (this.turn == 1)
