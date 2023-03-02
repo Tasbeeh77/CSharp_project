@@ -25,13 +25,13 @@ namespace client
             Writer.AutoFlush= true;
             Reader = new StreamReader(nStream);
         }
-        public static void sendUserName(string UserName)
+        public void sendUserName(string UserName)
         {
             Writer.WriteLine($"{UserName}|signIn");
         }
         public static void sendRoomData(string Player1color)
         {
-            Writer.Write($"{start.UserName}|{CreateRoom.Row}|{CreateRoom.Col}|{Player1color}|createRoom");
+           Writer.WriteLine($"{start.UserName}|{CreateRoom.Row}|{CreateRoom.Col}|{Player1color}|createRoom");
         }
         public static StreamReader displayRooms()
         {

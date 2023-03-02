@@ -83,8 +83,7 @@
             this.Name = "Roomgame";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "Rooms";
-            this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.Roomgame_FormClosing);
-            this.Load += new System.EventHandler(this.Roomgame_Load);
+            this.MouseClick += new System.Windows.Forms.MouseEventHandler(this.Roomgame_MouseClick);
             this.ResumeLayout(false);
 
         }

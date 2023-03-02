@@ -30,19 +30,25 @@ namespace client
         {
             this.Text = $"Welcome, {start.UserName}. we wish you Enjoy the Game!";
         }
-        private void button1_Click(object sender, EventArgs e)
+        async private void button1_Click(object sender, EventArgs e)
         {
             string[] roomData = new string[5];
-            string data = Connection.displayRooms().ReadLine();
+            string data = await Connection.displayRooms().ReadLineAsync();
+            MessageBox.Show("client read : "+data);
             roomData = data.Split('|');
             if (roomData[0] == "roomData")
             {
-                listView1.Items.Add(new ListViewItem($"RoomNo: {roomData[1]} & numbers of players : {roomData[4]}"));
+              listView1.Items.Add(new ListViewItem($"RoomNo: {roomData[1]} & numbers of players : {roomData[4]}"));
             }
         }
         private void Roomgame_FormClosing(object sender, FormClosingEventArgs e)
         {
            Connection.ClosingForm();
+        }
+
+        private void Roomgame_MouseClick(object sender, MouseEventArgs e)
+        {
+
         }
     }
 }

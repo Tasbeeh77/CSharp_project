@@ -45,9 +45,9 @@ namespace Server
                 if (Connection != null) 
                 {
                     users.Add(user);
-                }               
-                listView1.Items.Add(new ListViewItem("new client entered game..."));
-                user.newClientMessage += this.Item_newClientMessage;
+                }
+                HandleExceptionOnControls("new client entered game...","listView1");
+                user.newClientMessage += this.Item_newClientMessage; //subscribe to newClientMessage event
                 user.publishEvent();
             }
             });
@@ -73,30 +73,50 @@ namespace Server
 
         public void signIn(string[] streamData,StreamWriter Writer)
         {
-            MessageBox.Show(users.Count.ToString());
             users[playerId].Id = playerId;
             users[playerId++].UserName = streamData[0];
-            listView1.Items.Add(new ListViewItem($"CLIENT Name = {streamData[0]} & Id = {playerId}"));
-            label2.Text = $"Number of players: {users.Count}";
-            //sending room data to stream 
-            //displayAvailableRooms(Writer);
+            HandleExceptionOnControls($"CLIENT Name = {streamData[0]} & Id = {playerId}", "listView1");
+            HandleExceptionOnControls($"Number of players: {users.Count}", "label2");
+            displayAvailableRooms(Writer);
         }
         public void createRoomRequest(string[] streamData)
         {
             Room room= new Room(streamData[0], int.Parse(streamData[1]), int.Parse(streamData[2]), streamData[3],1,users);
             availableRooms.Add(room);
             foreach (var item in streamData)
-            { 
-              listView1.Items.Add(new ListViewItem($"Room Data = {item}"));
+            {
+                HandleExceptionOnControls($"Room Data = {item}", "listView1");
             }
         }
         void displayAvailableRooms(StreamWriter Writer)
         {
             if (availableRooms.Count > 0)
             {
-                MessageBox.Show($"roomData from server: {availableRooms[0].roomIndex} {availableRooms[0].row} {availableRooms[0].col} {availableRooms[0].players.Count}");
-                Writer.WriteLine($"roomData,{availableRooms[0].roomIndex}|{availableRooms[0].row}|{availableRooms[0].col}|{availableRooms[0].players.Count}");
-                listView1.Items.Add(new ListViewItem("room data sent done"));
+                Writer.WriteLine($"roomData|{availableRooms[0].roomIndex}|{availableRooms[0].row}|{availableRooms[0].col}|{availableRooms[0].players.Count}");
+                HandleExceptionOnControls("room data sent done", "listView1");
+            }
+        }
+        void HandleExceptionOnControls(string message, string control)
+        {
+            if (control == "listView1")
+            {
+                if (listView1.InvokeRequired)
+                {
+                    listView1.Invoke(new MethodInvoker(() =>
+                    {
+                        listView1.Items.Add(new ListViewItem(message));
+                    }));
+                }
+            }
+            else
+            {
+                if (label2.InvokeRequired)
+                {
+                    label2.Invoke(new MethodInvoker(() =>
+                    {
+                        label2.Text = message;
+                    }));
+                }
             }
         }
         private void button1_Click(object sender, EventArgs e)

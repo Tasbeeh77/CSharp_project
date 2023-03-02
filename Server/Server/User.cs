@@ -18,19 +18,9 @@ using static System.Windows.Forms.VisualStyles.VisualStyleElement;
 
 namespace Server
 {
-
     public delegate void NewClientMessageHandeler(object sender,StreamWriter Writer,StreamReader Reader,string[] streamData, Socket userConnection);
-   
-    /*public class UserEventArgs : EventArgs
-    {
-        public StreamReader Reader { get; set; }
-        public StreamWriter Writer { get; set; }
-        public Socket userConnection { get; set; }
-        public string[] streamData { get; set; }
-    }*/
     public class User
     {
-        //public delegate void NewClientMessageHandeler(object sender, UserEventArgs args);
         public event NewClientMessageHandeler newClientMessage;
 
         public int Id { get; set; }
@@ -42,24 +32,24 @@ namespace Server
         Socket userConnection;
         NetworkStream nstream;
         string[] streamData;
-        public User(Socket tcpClient)
+        public User(Socket socket)
         {
             streamData = new string[10];
-            userConnection = tcpClient;
+            userConnection = socket;
             nstream = new NetworkStream(userConnection); ;
             Writer = new StreamWriter(nstream);
             Writer.AutoFlush = true;
             Reader = new StreamReader(nstream);
         }
-        protected virtual void ReadMessages()
+        async protected virtual void ReadMessages()
         {
             while (true)
             {
                 if(nstream!=null)
                 {
-                    string value = Reader.ReadLine();
+                    string value =await Reader.ReadLineAsync();
                     streamData = value.Split('|');
-                    newClientMessage(this, Writer, Reader, streamData, userConnection);
+                    newClientMessage(this, Writer, Reader, streamData, userConnection); //publish event
                     nstream.Flush();
                 }
             }

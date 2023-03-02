@@ -21,11 +21,23 @@ namespace client
         /************ Cells Measurments  ****************/
         int XSpace;
         int YSpace;
+        //
+        int[,] board;
+        int rowN;
+        int colN;
+        //******************
+        int turn;
+
         public gameBoard()
         {
             InitializeComponent();
             this.boardColumns = new Rectangle[7];
             label1.Text = $"Player: {start.UserName}";
+            rowN = 6;
+            colN = 7;
+            board = new int[6, 7];
+            this.turn = 1;
+
         }
         public gameBoard(string username)
         {
@@ -47,9 +59,9 @@ namespace client
             YSpace = 50;
 
             g.FillRectangle(Brushes.Blue, XStart, YStart, boardWidth, boardHeight);
-            for (int i = 0; i < 6; i++)
+            for (int i = 0; i < rowN; i++)
             {
-                for (int j = 0; j < 7; j++)
+                for (int j = 0; j < colN; j++)
                 {
                     if (i == 0)
                     {
@@ -68,5 +80,138 @@ namespace client
         {
 
         }
+
+        private void gameBoard_MouseClick(object sender, MouseEventArgs e)
+        {
+            int columnIndex = this.columnNumber(e.Location);
+            // MessageBox.Show("index = "+columnIndex); 
+            if (columnIndex != -1)
+            {
+                int rowIndex = this.emptyRow(columnIndex);
+                if (rowIndex != -1)
+                {
+                    this.board[rowIndex, columnIndex] = this.turn;
+                    if (turn == 1)
+                    {
+                        Graphics g = this.CreateGraphics();
+                        g.FillEllipse(Brushes.Red, 32 + 50 * columnIndex, 80 + (50 * rowIndex), 32, 32);
+                    }
+                    else if (turn == 2)
+                    {
+                        Graphics g = this.CreateGraphics();
+                        g.FillEllipse(Brushes.Yellow, 32 + 50 * columnIndex, 80 + (50 * rowIndex), 32, 32);
+
+                    }
+                    int winner = this.Winner(this.turn);
+                    if (winner != -1)
+                    {
+                        string player = (winner == 1) ? "Red" : "Yellow";
+                        MessageBox.Show("Congratulations!" + player + " Player has won");
+                        Application.Restart();
+
+                    }
+                    if (this.turn == 1)
+                    {
+                        this.turn = 2;
+                    }
+                    else
+                    {
+                        this.turn = 1;
+                    }
+
+                }
+            }
+        }
+        private int columnNumber(Point mouse)
+        {
+            int spaceX = 9;
+            int spaceY = 3;
+            for (int i = 0; i < boardColumns.Length; i++)
+            {
+                if ((mouse.X >= boardColumns[i].X) && (mouse.Y >= boardColumns[i].Y))
+                {
+                    if ((mouse.X <= this.boardColumns[i].X + spaceX * (i + 1)) &&
+                     (mouse.Y <= this.boardColumns[i].Y + spaceY * (i + 1)))
+                    {
+                        if (i > 3)
+                        {
+                            spaceX = 2;
+                        }
+                        return i;
+                    }
+                }
+            }
+            return -1;
+        }
+        private int emptyRow(int col)
+        {
+            for (int i = 5; i >= 0; i--)
+            {
+                if (this.board[i, col] == 0)
+                { return i; }
+            }
+            return -1;
+        }
+        /******************************************************************************/
+
+        private bool EqualNums(int toCheck, params int[] numbers)
+        {
+            foreach (int num in numbers)
+            {
+                if (toCheck != num)
+                    return false;
+            }
+            return true;
+        }
+
+        private int Winner(int playerToCheck)
+        {
+            //vertical win check
+            for (int row = 0; row < this.board.GetLength(0) - 3; row++)
+            {
+                for (int col = 0; col < this.board.GetLength(1); col++)
+                {
+                    if (this.EqualNums(playerToCheck, this.board[row, col], this.board[row + 1, col],
+                        this.board[row + 2, col], this.board[row + 3, col]))
+                        return playerToCheck;
+                }
+            }
+            //horizontal win check
+            for (int row = 0; row < this.board.GetLength(0); row++)
+            {
+                for (int col = 0; col < this.board.GetLength(1) - 3; col++)
+                {
+                    if (this.EqualNums(playerToCheck, this.board[row, col], this.board[row, col + 1],
+                        this.board[row, col + 2], this.board[row, col + 3]))
+                        return playerToCheck;
+                }
+            }
+            //top-left diagonal check
+            for (int row = 0; row < this.board.GetLength(0) - 3; row++)
+            {
+                for (int col = 0; col < this.board.GetLength(1) - 3; col++)
+                {
+                    if (this.EqualNums(playerToCheck, this.board[row, col], this.board[row + 1, col + 1],
+                        this.board[row + 2, col + 2], this.board[row + 3, col + 3]))
+                        return playerToCheck;
+                }
+            }
+            //Back-right diagonal check
+            for (int row = 0; row < this.board.GetLength(0) - 3; row++)
+            {
+                for (int col = 3; col < this.board.GetLength(1); col++)
+                {
+                    if (this.EqualNums(playerToCheck, this.board[row, col], this.board[row + 1, col - 1],
+                        this.board[row + 2, col - 2], this.board[row + 3, col - 3]))
+                    {
+
+                        return playerToCheck;
+                    }
+                }
+            }
+
+            return -1;
+        }
+
     }
 }

@@ -32,7 +32,7 @@ namespace client
                 thr.Start();
                 this.Close();
                 Connection obj = new Connection();
-                Connection.sendUserName(UserName);
+                obj.sendUserName(UserName);
             }
             else
             {
