@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Newtonsoft.Json.Bson;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
@@ -11,6 +12,7 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using static System.Windows.Forms.VisualStyles.VisualStyleElement;
 
 namespace client
 {
@@ -21,14 +23,6 @@ namespace client
         {
             InitializeComponent();
         }
-        void connectToServer()
-        {
-            TcpClient client= new TcpClient();
-            client.Connect(IPAddress.Parse("127.0.0.1"), 5500);
-            NetworkStream nStream= client.GetStream();
-            BinaryWriter binaryWriter= new BinaryWriter(nStream);
-            binaryWriter.Write($"{UserName}|signIn");
-        }
         private void button1_Click(object sender, EventArgs e)
         {
             if(textBox1.Text!="")
@@ -37,7 +31,8 @@ namespace client
                 Thread thr = new Thread(() => Application.Run(new Roomgame()));
                 thr.Start();
                 this.Close();
-                connectToServer();
+                Connection obj = new Connection();
+                Connection.sendUserName(UserName);
             }
             else
             {

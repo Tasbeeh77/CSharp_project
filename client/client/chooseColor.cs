@@ -11,33 +11,26 @@ using System.Windows.Forms;
 using System.IO;
 using System.Net;
 using System.Net.Sockets;
+using static System.Windows.Forms.VisualStyles.VisualStyleElement.StartPanel;
+
 
 namespace client
 {
     public partial class chooseColor : Form
     {
-        public static string Player1color { get; set; }
+        string Player1color;
 
         public chooseColor()
         {
             InitializeComponent();
         }
-        void connectToServer()
-        {
-            TcpClient client = new TcpClient();
-            client.Connect(IPAddress.Parse("127.0.0.1"), 5500);
-            NetworkStream nStream = client.GetStream();
-            BinaryWriter binaryWriter = new BinaryWriter(nStream);
-            binaryWriter.Write($"{start.UserName}|{CreateRoom.Row}|{CreateRoom.Col}|{Player1color}|createRoom");
-        }
         private void button3_Click(object sender, EventArgs e)
         {
             Thread thr = new Thread(() => Application.Run(new gameBoard()));
             thr.Start();
-            connectToServer();
+            Connection.sendRoomData(Player1color);
             this.Close();
         }
-
         private void button1_Click(object sender, EventArgs e)
         {
             Player1color = "red";

@@ -27,3 +27,10 @@ C:\Users\hp\Desktop\connect4game\client\client\obj\Debug\client.csproj.CoreCompi
 C:\Users\hp\Desktop\connect4game\client\client\obj\Debug\client.exe
 C:\Users\hp\Desktop\connect4game\client\client\obj\Debug\client.pdb
 D:\ITI\C#\connect4game\client\client\obj\Debug\client.gameBoard.resources
+D:\ITI\C#\connect4game\client\client\bin\Debug\Newtonsoft.Json.dll
+D:\ITI\C#\connect4game\client\client\bin\Debug\Newtonsoft.Json.xml
+D:\ITI\C#\connect4game\client\client\obj\Debug\client.csproj.CopyComplete
+C:\Users\hp\Desktop\connect4game\client\client\bin\Debug\Newtonsoft.Json.dll
+C:\Users\hp\Desktop\connect4game\client\client\bin\Debug\Newtonsoft.Json.xml
+C:\Users\hp\Desktop\connect4game\client\client\obj\Debug\client.gameBoard.resources
+C:\Users\hp\Desktop\connect4game\client\client\obj\Debug\client.csproj.CopyComplete

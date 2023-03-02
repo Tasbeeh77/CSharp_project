@@ -148,7 +148,7 @@
             this.Name = "serverBoard";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "Server";
-            this.Leave += new System.EventHandler(this.serverBoard_Leave);
+            this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.serverBoard_FormClosing);
             this.ResumeLayout(false);
             this.PerformLayout();
 
