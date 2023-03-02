@@ -33,14 +33,18 @@ namespace client
         }
         async private void button1_Click(object sender, EventArgs e)
         {
-            string[] roomData = new string[5];
+            string[] roomsData = new string[10];
+            string[] room = new string[5];
             string data = await Connection.displayRooms().ReadLineAsync();
             //MessageBox.Show("client read : "+data);
-            roomData = data.Split('|');
-            if (roomData[0] == "roomData")
+            roomsData = data.Split('&');
+            MessageBox.Show(roomsData[0]);
+            foreach (var item in roomsData)
             {
-              listView1.Items.Add(new ListViewItem($"RoomNo: {roomData[1]} & numbers of players : {roomData[4]}"));
+                room = item.Split('|');
+                listView1.Items.Add(new ListViewItem($"RoomNo: {room[0]} & numbers of players : {room[3]}"));
             }
+            
         }
         private void button4_Click(object sender, EventArgs e)//watch
         {

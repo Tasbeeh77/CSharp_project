@@ -27,6 +27,8 @@ namespace Server
         List<Room> availableRooms = new List<Room>();
         bool flag = true;
         int playerId;
+        int roomsCount = 1;
+
         public serverBoard()
         {
             InitializeComponent();
@@ -103,7 +105,7 @@ namespace Server
         }
         public void createRoomRequest(string[] streamData)
         {
-            Room room= new Room(streamData[0], int.Parse(streamData[1]), int.Parse(streamData[2]), streamData[3],1, users[users.Count - 1]);
+            Room room= new Room(streamData[0], int.Parse(streamData[1]), int.Parse(streamData[2]), streamData[3],roomsCount++, users[users.Count - 1]);
             availableRooms.Add(room);
             foreach (var item in streamData)
             {
@@ -112,9 +114,15 @@ namespace Server
         }
         void displayAvailableRooms(StreamWriter Writer)
         {
+            string allRooms = "";
             if (availableRooms.Count > 0)
             {
-                Writer.WriteLine($"roomData|{availableRooms[0].roomIndex}|{availableRooms[0].row}|{availableRooms[0].col}|{availableRooms[0].players.Count}");
+                foreach (var item in availableRooms)
+                {
+                    allRooms+=$"{item.roomIndex}|{item.row}|{item.col}|{item.players.Count}&";
+                }
+                MessageBox.Show(allRooms);
+                Writer.WriteLine(allRooms);
                 HandleExceptionOnControls("room data sent done", "listView1");
             }
         }
