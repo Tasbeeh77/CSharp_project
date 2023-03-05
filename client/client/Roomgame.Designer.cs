@@ -42,7 +42,7 @@
             this.button3.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(192)))), ((int)(((byte)(64)))), ((int)(((byte)(0)))));
             this.button3.Font = new System.Drawing.Font("Microsoft Sans Serif", 16.2F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.button3.ForeColor = System.Drawing.SystemColors.ButtonFace;
-            this.button3.Location = new System.Drawing.Point(451, 361);
+            this.button3.Location = new System.Drawing.Point(328, 376);
             this.button3.Name = "button3";
             this.button3.Size = new System.Drawing.Size(226, 57);
             this.button3.TabIndex = 3;
@@ -52,9 +52,10 @@
             // 
             // button1
             // 
-            this.button1.Location = new System.Drawing.Point(722, 362);
+            this.button1.Font = new System.Drawing.Font("Microsoft Sans Serif", 16.2F, System.Drawing.FontStyle.Bold);
+            this.button1.Location = new System.Drawing.Point(627, 362);
             this.button1.Name = "button1";
-            this.button1.Size = new System.Drawing.Size(177, 66);
+            this.button1.Size = new System.Drawing.Size(248, 84);
             this.button1.TabIndex = 4;
             this.button1.Text = "show available rooms";
             this.button1.UseVisualStyleBackColor = true;
@@ -73,6 +74,7 @@
             // button2
             // 
             this.button2.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(192)))), ((int)(((byte)(64)))), ((int)(((byte)(0)))));
+            this.button2.Enabled = false;
             this.button2.Font = new System.Drawing.Font("Microsoft Sans Serif", 16.2F, System.Drawing.FontStyle.Bold);
             this.button2.ForeColor = System.Drawing.SystemColors.ButtonHighlight;
             this.button2.Location = new System.Drawing.Point(773, 89);
@@ -86,6 +88,7 @@
             // button4
             // 
             this.button4.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(192)))), ((int)(((byte)(64)))), ((int)(((byte)(0)))));
+            this.button4.Enabled = false;
             this.button4.Font = new System.Drawing.Font("Microsoft Sans Serif", 16.2F, System.Drawing.FontStyle.Bold);
             this.button4.ForeColor = System.Drawing.SystemColors.ButtonHighlight;
             this.button4.Location = new System.Drawing.Point(773, 163);
@@ -125,6 +128,7 @@
             this.MouseClick += new System.Windows.Forms.MouseEventHandler(this.Roomgame_MouseClick);
             this.ResumeLayout(false);
             this.PerformLayout();
+
         }
         #endregion
         private System.Windows.Forms.Button button3;

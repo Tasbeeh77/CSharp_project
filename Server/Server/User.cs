@@ -18,7 +18,7 @@ using static System.Windows.Forms.VisualStyles.VisualStyleElement;
 
 namespace Server
 {
-    public delegate void NewClientMessageHandeler(object sender,StreamWriter Writer,StreamReader Reader,string[] streamData, Socket userConnection);
+    public delegate void NewClientMessageHandeler(User sender,StreamWriter Writer,StreamReader Reader,string[] streamData, Socket userConnection);
     public class User
     {
         public event NewClientMessageHandeler newClientMessage;
@@ -26,11 +26,10 @@ namespace Server
         public int Id { get; set; }
         public string UserName { get; set; }
         public string Color { get; set; }
-        public static string CurrentRoom { get; set; }
         StreamReader Reader;
         StreamWriter Writer;
         Socket userConnection;
-        NetworkStream nstream;
+        public NetworkStream nstream;
         string[] streamData;
         public User(Socket socket)
         {
@@ -51,7 +50,7 @@ namespace Server
                     //MessageBox.Show(value);
                     streamData = value.Split('|');
                     newClientMessage(this, Writer, Reader, streamData, userConnection); //publish event
-                   //MessageBox.Show(value+"after event");
+                    //MessageBox.Show(value+"after event");
                     nstream.Flush();
                 }
             }

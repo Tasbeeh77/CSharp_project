@@ -4,7 +4,9 @@ using System.ComponentModel;
 using System.Data;
 using System.Drawing;
 using System.Linq;
+using System.Runtime.InteropServices;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
@@ -12,6 +14,9 @@ namespace client
 {
     public partial class gameBoard : Form
     {
+        Brush brush;
+        Color color;
+        int roomNo;
         private Rectangle[] boardColumns;
         /************ Board Measurements *************/
         int boardWidth;
@@ -26,9 +31,15 @@ namespace client
         int rowN;
         int colN;
         //******************
+        int MyNumber;
+        int otherPlayerNo;
         int turn;
-
-        public gameBoard()
+        Thread thread;
+        int columnIndex;
+        int rowIndex;
+        Color myColor;
+        bool flag = true;
+        public gameBoard(string playerType)
         {
             InitializeComponent();
             this.boardColumns = new Rectangle[7];
@@ -37,12 +48,43 @@ namespace client
             colN = 7;
             board = new int[6, 7];
             this.turn = 1;
-
+            thread = new Thread(new ThreadStart(PositionChanged));
+            thread.Start();
+            roomNo = int.Parse(Roomgame.RoomNo);
+            if(playerType=="watcher")
+            {
+               // this.Enabled= false;
+                button_WOC1.Enabled = true;
+                button_WOC1.Visible = true;
+                label1.Text = $"Watcher: {start.UserName}";
+            }
         }
-        public gameBoard(string username)
+        private void PositionChanged()
         {
-            InitializeComponent();
-            this.boardColumns = new Rectangle[7];
+            while (true)
+            {
+                if (Connection.getStream() != null)
+                {
+                    string message = Connection.getReader().ReadLine();
+                    string[] x = message.Split('|');
+                    if (x[0] == "roomNumber")
+                    {
+                        roomNo = int.Parse(x[1]);
+                    }
+                    if (x[0] == "ChangePoint") //"pointChanged|row|col|color"
+                    {
+                        if (x[3] == "red")
+                        {
+                            color = Color.Red;
+                        }
+                        else
+                        {
+                            color = Color.Yellow;
+                        }
+                        drawEllipse(int.Parse(x[1]), int.Parse(x[2]), color);
+                    }
+                }
+            }
         }
         protected override void OnPaint(PaintEventArgs e)
         {
@@ -73,42 +115,61 @@ namespace client
         }
         private void button_WOC1_Click(object sender, EventArgs e)
         {
-
+            Connection.stopWatch(roomNo.ToString());
+            this.Close();
         }
 
         private void label1_Click(object sender, EventArgs e)
         {
 
         }
-
+        void drawEllipse(int row, int col, Color playercolor)
+        {
+            Graphics g = this.CreateGraphics();
+            brush = new SolidBrush(playercolor);
+            g.FillEllipse(brush, 32 + 50 * col, 80 + (50 * row), 32, 32);
+        }
         private void gameBoard_MouseClick(object sender, MouseEventArgs e)
         {
-            int columnIndex = this.columnNumber(e.Location);
-            // MessageBox.Show("index = "+columnIndex); 
+            columnIndex = this.columnNumber(e.Location);
             if (columnIndex != -1)
             {
-                int rowIndex = this.emptyRow(columnIndex);
+                rowIndex = this.emptyRow(columnIndex);
                 if (rowIndex != -1)
                 {
                     this.board[rowIndex, columnIndex] = this.turn;
                     if (turn == 1)
                     {
-                        Graphics g = this.CreateGraphics();
-                        g.FillEllipse(Brushes.Red, 32 + 50 * columnIndex, 80 + (50 * rowIndex), 32, 32);
+                        if (chooseColor.Player1color == "red")
+                        {
+                            color = Color.Red;
+                        }
+                        else
+                        {
+                            color = Color.Yellow;
+                        }
+                        drawEllipse(rowIndex, columnIndex, color);
+                        Connection.getWriter().WriteLine($"pointChanged|{Roomgame.RoomNo}|{1}|{rowIndex}|{columnIndex}");
                     }
                     else if (turn == 2)
                     {
-                        Graphics g = this.CreateGraphics();
-                        g.FillEllipse(Brushes.Yellow, 32 + 50 * columnIndex, 80 + (50 * rowIndex), 32, 32);
-
+                        if (chooseColor.Player1color == "red")
+                        {
+                            color = Color.Yellow;
+                        }
+                        else
+                        {
+                            color = Color.Red;
+                        }
+                        drawEllipse(rowIndex, columnIndex, color);
+                        Connection.getWriter().WriteLine($"pointChanged|{Roomgame.RoomNo}|{2}|{rowIndex}|{columnIndex}");
                     }
                     int winner = this.Winner(this.turn);
                     if (winner != -1)
                     {
                         string player = (winner == 1) ? "Red" : "Yellow";
                         MessageBox.Show("Congratulations!" + player + " Player has won");
-                       // Application.Restart();
-
+                        // Application.Restart();
                     }
                     if (this.turn == 1)
                     {
@@ -212,6 +273,5 @@ namespace client
 
             return -1;
         }
-
     }
 }

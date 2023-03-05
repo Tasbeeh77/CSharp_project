@@ -23,16 +23,24 @@ namespace client
         {
             InitializeComponent();
         }
+
         private void button1_Click(object sender, EventArgs e)
         {
             if(textBox1.Text!="")
             {
                 UserName = textBox1.Text;
-                Thread thr = new Thread(() => Application.Run(new Roomgame()));
-                thr.Start();
-                this.Close();
-                Connection obj = new Connection();
-                obj.sendUserName(UserName);
+                try
+                {
+                    Connection obj = new Connection();
+                    obj.sendUserName(UserName);
+                    Thread thr = new Thread(() => Application.Run(new Roomgame()));
+                    thr.Start();
+                    this.Close();
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show(ex.Message);
+                }
             }
             else
             {

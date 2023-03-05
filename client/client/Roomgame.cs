@@ -17,12 +17,13 @@ namespace client
 {
     public partial class Roomgame : Form
     {
-        string RoomNo;
+        public static string RoomNo { get; set; }
         public Roomgame()
         {
             InitializeComponent();
+            RoomNo = "1";
         }
-        private void button3_Click(object sender, EventArgs e)
+        private void button3_Click(object sender, EventArgs e) //CreateRoom
         {
             Thread thr = new Thread(() => Application.Run(new CreateRoom()));
             thr.Start();
@@ -31,36 +32,77 @@ namespace client
         {
             this.Text = $"Welcome, {start.UserName}. we wish you Enjoy the Game!";
         }
-        async private void button1_Click(object sender, EventArgs e)
+        async private void button1_Click(object sender, EventArgs e) //show available rooms
         {
             string[] roomsData = new string[10];
             string[] room = new string[5];
-            string data = await Connection.displayRooms().ReadLineAsync();
-            //MessageBox.Show("client read : "+data);
+            string data = await Connection.getReader().ReadLineAsync();
             roomsData = data.Split('&');
-            MessageBox.Show(roomsData[0]);
-            foreach (var item in roomsData)
+            try
             {
-                room = item.Split('|');
-                listView1.Items.Add(new ListViewItem($"RoomNo: {room[0]} & numbers of players : {room[3]}"));
+                for(int i=0;i<roomsData.Length-1;i++) 
+                {
+                    room = roomsData[i].Split('|');
+                    if (listView1.InvokeRequired)
+                    {
+                        listView1.Invoke(new MethodInvoker(() =>
+                        {
+                            listView1.Items.Add(new ListViewItem($"RoomNumber: {room[0]} & numbers of players : {room[3]}"));
+                        }));
+                    }
+                    else
+                    {
+                        listView1.Items.Add(new ListViewItem($"RoomNumber: {room[0]} & numbers of players : {room[3]}"));
+                    }
+                }
             }
-            
+            catch (IndexOutOfRangeException ex)
+            {
+                MessageBox.Show(ex.Message);
+            }
+            button4.Enabled = true;
+            button2.Enabled = true;
         }
         private void button4_Click(object sender, EventArgs e)//watch
         {
             RoomNo = textBox1.Text;
-            Connection.watch(RoomNo);
+            if (int.Parse(listView1.Items[int.Parse(RoomNo) - 1].Text.Split(':')[2]) < 2)
+            {
+                MessageBox.Show("Room is Not full,you can join it or choose another room with two players");
+            }
+            else
+            {
+                Thread thrWatch = new Thread(() => Application.Run(new gameBoard("watcher")));
+                thrWatch.Start();
+                Connection.watch(RoomNo);
+            }
         }
         private void button2_Click(object sender, EventArgs e) //join
         {
             RoomNo = textBox1.Text;
-            Connection.join(RoomNo);
+            //RoomNo: 1 & numbers of players : 2
+            if (int.Parse(listView1.Items[int.Parse(RoomNo) - 1].Text.Split(':')[2]) >= 2)
+            {
+                MessageBox.Show("Room is full,you can watch it only");
+            }
+            else if (int.Parse(listView1.Items[int.Parse(RoomNo) - 1].Text.Split(':')[2]) == 0)
+            {
+                Thread thrToChooseColor = new Thread(() => Application.Run(new chooseColor("join")));
+                thrToChooseColor.Start();
+            }
+            else
+            {
+                Connection.join(RoomNo);
+                Thread thr = new Thread(() => Application.Run(new gameBoard("player")));
+                thr.Start();
+                Connection.getWriter().WriteLine($"PlayersData|{start.UserName}");
+            }
+            Invalidate();
         }
         private void Roomgame_FormClosing(object sender, FormClosingEventArgs e)
         {
            Connection.ClosingForm();
         }
-
         private void Roomgame_MouseClick(object sender, MouseEventArgs e)
         {
 

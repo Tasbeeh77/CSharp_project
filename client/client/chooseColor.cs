@@ -18,18 +18,23 @@ namespace client
 {
     public partial class chooseColor : Form
     {
-        string Player1color;
-
-        public chooseColor()
+        public static string Player1color { set; get; }
+        string sendAs;
+        public chooseColor(string type)
         {
             InitializeComponent();
+            sendAs= type;
         }
         private void button3_Click(object sender, EventArgs e)
         {
-            Thread thr = new Thread(() => Application.Run(new gameBoard()));
+            Thread thr = new Thread(() => Application.Run(new gameBoard("player")));
             thr.Start();
-            Connection.sendRoomData(Player1color);
+            if (sendAs== "createRoom")
+               Connection.sendRoomData(Player1color);
+            else
+                Connection.join(Roomgame.RoomNo);
             this.Close();
+            Connection.getWriter().WriteLine($"PlayersData|{start.UserName}");
         }
         private void button1_Click(object sender, EventArgs e)
         {

@@ -10,12 +10,19 @@ namespace Server
         public int col { get; set; }
         public string player1Color { get; set; }
         string player2Color;
+
         public int roomIndex { get; set; }
-        public List <User> players { get; set; }
-        public List<User> watchers { get; set; }
+        public List<User> players = new List<User>();
+        public List<User> watchers = new List<User>();
         public Room()
         {
             roomIndex = 0;
+        }
+        public Room(int roomNo,int row,int col)
+        {
+            this.roomIndex = roomNo;
+            this.row = row;
+            this.col = col;
         }
         public Room(string player1Name,int row, int col, string player1Color,int roomIndex,User player1)
         {
@@ -25,7 +32,7 @@ namespace Server
             this.player1Color = player1Color;
             player1.Color = player1Color;
             this.roomIndex = roomIndex;
-            players = new List<User> { player1 };
+            players.Add(player1);
         }
         public void setPlayer2Color()
         {

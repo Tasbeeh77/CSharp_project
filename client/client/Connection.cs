@@ -13,7 +13,7 @@ namespace client
     public class Connection
     {
         TcpClient client;
-        NetworkStream nStream;
+        static NetworkStream nStream;
         static StreamReader Reader;
         static StreamWriter Writer;
         public Connection()
@@ -27,23 +27,36 @@ namespace client
         }
         public void sendUserName(string UserName)
         {
-            Writer.WriteLine($"{UserName}|signIn");
+            Writer.WriteLine($"signIn|{UserName}");
         }
         public static void sendRoomData(string Player1color)
         {
-            Writer.WriteLine($"{start.UserName}|{CreateRoom.Row}|{CreateRoom.Col}|{Player1color}|createRoom");
+            Writer.WriteLine($"createRoom|{start.UserName}|{CreateRoom.Row}|{CreateRoom.Col}|{Player1color}");
         }
-        public static StreamReader displayRooms()
+        public static StreamReader getReader()
         {
             return Reader;
         }
+        public static StreamWriter getWriter()
+        {
+            return Writer;
+        }
+        public static NetworkStream getStream()
+        {
+            return nStream;
+        }
         public static void join(string RoomNo)
         {
-            Writer.WriteLine($"join|{RoomNo}|{start.UserName}");
+            Writer.WriteLine($"join|{RoomNo}|{start.UserName}|{chooseColor.Player1color}");
         }
         public static void watch(string RoomNo)
         {
             Writer.WriteLine($"watch|{RoomNo}|{start.UserName}");
+        }
+        public static void stopWatch(string RoomNo)
+        {
+            //stopWatch|roomNo|userName
+            Writer.WriteLine($"stopWatch|{RoomNo}|{start.UserName}");
         }
         public static void ClosingForm()
         {
