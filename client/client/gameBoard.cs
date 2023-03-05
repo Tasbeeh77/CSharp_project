@@ -37,7 +37,8 @@ namespace client
         Thread thread;
         int columnIndex;
         int rowIndex;
-        Color myColor;
+        string myColor;
+        string otherPlayerColor;
         bool flag = true;
         public gameBoard(string playerType)
         {
@@ -65,23 +66,51 @@ namespace client
             {
                 if (Connection.getStream() != null)
                 {
-                    string message = Connection.getReader().ReadLine();
-                    string[] x = message.Split('|');
-                    if (x[0] == "roomNumber")
+                    //string message = Connection.getReader().ReadLine();  
+                    while (!Connection.getReader().EndOfStream)
                     {
-                        roomNo = int.Parse(x[1]);
-                    }
-                    if (x[0] == "ChangePoint") //"pointChanged|row|col|color"
-                    {
-                        if (x[3] == "red")
+                        string message = Connection.getReader().ReadLine();
+                        string[] x = message.Split('|');
+                        if (x[0] == "roomNumber")
                         {
-                            color = Color.Red;
+                            roomNo = int.Parse(x[1]);
+                            MyNumber = int.Parse(x[3]);
+                            myColor = x[2];
                         }
-                        else
+                        if (x[0] == "ChangePoint") //"pointChanged|row|col|color|turn"
                         {
-                            color = Color.Yellow;
+                            if (x[3] == "red")
+                            {
+                                color = Color.Red;
+                            }
+                            else
+                            {
+                                color = Color.Yellow;
+                            }
+                            if (!label1.Text.Contains("Watcher"))
+                                turn = int.Parse(x[4]);
+                            ReDrawEllipse(int.Parse(x[1]), int.Parse(x[2]), color);
                         }
-                        drawEllipse(int.Parse(x[1]), int.Parse(x[2]), color);
+                        if (x[0] == "Lose") //Lose|roomNo
+                        {
+                            MessageBox.Show("You Lose");
+                        }
+                        if (x[0]== "acceptPlayAgain")
+                        {
+                            MessageBoxButtons buttons = MessageBoxButtons.YesNo;
+                            DialogResult result;
+                            result = MessageBox.Show($"Do you want to play again?","", buttons);
+                            if (result == DialogResult.Yes)  //playAgain|winnerNo|roomNO
+                            {
+                                Thread thr = new Thread(() => Application.Run(new gameBoard("player")));
+                                thr.Start();
+                                this.Close();
+                            }
+                            else
+                            {
+                                this.Close();
+                            }
+                        }
                     }
                 }
             }
@@ -118,10 +147,22 @@ namespace client
             Connection.stopWatch(roomNo.ToString());
             this.Close();
         }
-
         private void label1_Click(object sender, EventArgs e)
         {
-
+        }
+        void ReDrawEllipse(int row, int col, Color playercolor)
+        {
+            rowIndex = this.emptyRow(col);
+            if (rowIndex != -1)
+            {
+                if (MyNumber == 1)
+                    this.board[row, col] = 2;
+                else
+                    this.board[row, col] = 1;
+                Graphics g = this.CreateGraphics();
+                brush = new SolidBrush(playercolor);
+                g.FillEllipse(brush, 32 + 50 * col, 80 + (50 * row), 32, 32);
+            }
         }
         void drawEllipse(int row, int col, Color playercolor)
         {
@@ -132,54 +173,64 @@ namespace client
         private void gameBoard_MouseClick(object sender, MouseEventArgs e)
         {
             columnIndex = this.columnNumber(e.Location);
+            //MessageBox.Show("colindex"+columnIndex.ToString());
             if (columnIndex != -1)
             {
                 rowIndex = this.emptyRow(columnIndex);
                 if (rowIndex != -1)
                 {
                     this.board[rowIndex, columnIndex] = this.turn;
-                    if (turn == 1)
+                    if (turn == MyNumber)
                     {
-                        if (chooseColor.Player1color == "red")
+                        if (myColor == "red")
                         {
                             color = Color.Red;
+                            otherPlayerColor = "Yellow";
                         }
                         else
                         {
                             color = Color.Yellow;
+                            otherPlayerColor = "Red";
                         }
                         drawEllipse(rowIndex, columnIndex, color);
-                        Connection.getWriter().WriteLine($"pointChanged|{Roomgame.RoomNo}|{1}|{rowIndex}|{columnIndex}");
-                    }
-                    else if (turn == 2)
-                    {
-                        if (chooseColor.Player1color == "red")
+                        if (this.turn == 1)
                         {
-                            color = Color.Yellow;
+                            this.turn = 2;
                         }
                         else
                         {
-                            color = Color.Red;
+                            this.turn = 1;
                         }
-                        drawEllipse(rowIndex, columnIndex, color);
-                        Connection.getWriter().WriteLine($"pointChanged|{Roomgame.RoomNo}|{2}|{rowIndex}|{columnIndex}");
+                        Connection.getWriter().WriteLine($"pointChanged|{Roomgame.RoomNo}|{turn}|{rowIndex}|{columnIndex}");
                     }
-                    int winner = this.Winner(this.turn);
+                    else 
+                    {
+                        MessageBox.Show("Not your Turn");
+                    }
+                    int winner = this.Winner(MyNumber);
                     if (winner != -1)
                     {
-                        string player = (winner == 1) ? "Red" : "Yellow";
+                        string player = (winner == 1) ? myColor : otherPlayerColor;
                         MessageBox.Show("Congratulations!" + player + " Player has won");
-                        // Application.Restart();
+                        //sendReault|WinnerNo|roomNO
+                        Connection.getWriter().WriteLine($"sendReault|{MyNumber}|{Roomgame.RoomNo}");
+                        string caption = "Play Again";
+                        MessageBoxButtons buttons = MessageBoxButtons.YesNo;
+                        DialogResult result;
+                        result = MessageBox.Show("Do you want play again?", caption, buttons);
+                        if (result == DialogResult.Yes)  //playAgain|winnerNo|roomNO
+                        {
+                            Connection.getWriter().WriteLine($"playAgain|{MyNumber}|{Roomgame.RoomNo}");
+                            Thread thr = new Thread(() => Application.Run(new gameBoard("player")));
+                            thr.Start();
+                            this.Close();
+                        }
+                        else
+                        {
+                            Connection.getWriter().WriteLine($"cancel|{MyNumber}|{Roomgame.RoomNo}");
+                            this.Close();
+                        }
                     }
-                    if (this.turn == 1)
-                    {
-                        this.turn = 2;
-                    }
-                    else
-                    {
-                        this.turn = 1;
-                    }
-
                 }
             }
         }
@@ -209,7 +260,8 @@ namespace client
             for (int i = 5; i >= 0; i--)
             {
                 if (this.board[i, col] == 0)
-                { return i; }
+                {
+                    return i; }
             }
             return -1;
         }

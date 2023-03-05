@@ -200,7 +200,7 @@ namespace Server
             {
                 StreamWriter writer = new StreamWriter(availableRooms[roomNo - 1].players[1].nstream);
                 writer.Flush();
-                writer.WriteLine($"Lose|{roomNo}");
+                writer.WriteLine($"Lose|{roomNo}"); //Lose|roomNo
             }
             else
             {
@@ -223,7 +223,7 @@ namespace Server
                             {
                                 //roomNumber|roomNo|red|playerNo
                                 writer.WriteLine($"roomNumber|{availableRooms[i].roomIndex}|{availableRooms[i].players[j].Color}|{j + 1}");
-                            }
+                        }
                         }
                 }
             }
@@ -236,25 +236,24 @@ namespace Server
         {
             //"pointChanged|roomnNo|playerNo|Row|Col"
             int playerNo = int.Parse(streamData[2]);
-            List<NetworkStream> roomUsers = new List<NetworkStream>();
             int roomNo = int.Parse(streamData[1])-1;
 
             foreach (var item in availableRooms[roomNo].watchers)
             {
-                roomUsers.Add(item.nstream);
+                StreamWriter writer = new StreamWriter(item.nstream);
+                writer.WriteLine($"ChangePoint|{streamData[3]}|{streamData[4]}|{player.Color}|0");
+                writer.Flush();
             }
             if (playerNo == 1)
             {
-                roomUsers.Add(availableRooms[roomNo].players[1].nstream);
+                StreamWriter writer = new StreamWriter(availableRooms[roomNo].players[0].nstream);
+                writer.WriteLine($"ChangePoint|{streamData[3]}|{streamData[4]}|{player.Color}|1");
+                writer.Flush();
             }
             else
             {
-                roomUsers.Add(availableRooms[roomNo].players[0].nstream);
-            }
-            foreach (var item in roomUsers)
-            {
-                StreamWriter writer = new StreamWriter(item);
-                writer.WriteLine($"ChangePoint|{streamData[3]}|{streamData[4]}|{player.Color}");
+                StreamWriter writer = new StreamWriter(availableRooms[roomNo].players[1].nstream);
+                writer.WriteLine($"ChangePoint|{streamData[3]}|{streamData[4]}|{player.Color}|2");
                 writer.Flush();
             }
         }
@@ -272,8 +271,9 @@ namespace Server
                 if(availableRooms[roomIndex].players.Count == 0)
             {
                 availableRooms[roomIndex].player1Name = streamData[2];
-                availableRooms[roomIndex].players.Add(users[users.Count - 1]);
                 availableRooms[roomIndex].player1Color = streamData[3];
+                availableRooms[roomIndex].players.Add(users[users.Count - 1]);
+                availableRooms[roomIndex].players[0].Color = streamData[3];
                 HandleExceptionOnControls($"{streamData[2]} Joined game in room {roomIndex + 1} as player1", "listView1");
                 }
                 else if (availableRooms[roomIndex].players.Count == 1)
@@ -292,16 +292,17 @@ namespace Server
         public void signIn(string[] streamData,StreamWriter Writer)
         {
             users[playerId].Id = playerId;
-            users[playerId++].UserName = streamData[0];
-            HandleExceptionOnControls($"CLIENT Name = {streamData[0]} & Id = {playerId}", "listView1");
+            users[playerId++].UserName = streamData[1];
+            HandleExceptionOnControls($"CLIENT Name = {streamData[1]} & Id = {playerId}", "listView1");
             HandleExceptionOnControls($"Number of players: {users.Count}", "label2");
             displayAvailableRooms(Writer);
         }
         public void createRoomRequest(string[] streamData)
         {
-            Room room= new Room(streamData[0], int.Parse(streamData[1]), int.Parse(streamData[2]), streamData[3],roomsCount++, users[users.Count - 1]);
+            Room room= new Room(streamData[1], int.Parse(streamData[2]), int.Parse(streamData[3]), streamData[4],roomsCount++, users[users.Count - 1]);
             availableRooms.Add(room);
-            for(int i=0 ; i< streamData.Length-1; i++) 
+            MessageBox.Show(streamData[3]);
+            for(int i=1 ; i< streamData.Length; i++) 
             {
                 HandleExceptionOnControls($"Room Data = {streamData[i]}", "listView1");
             }

@@ -45,9 +45,9 @@ namespace client
         {
             return nStream;
         }
-        public static void join(string RoomNo)
+        public static void join(string RoomNo,string player1color="red")
         {
-            Writer.WriteLine($"join|{RoomNo}|{start.UserName}|{chooseColor.Player1color}");
+            Writer.WriteLine($"join|{RoomNo}|{start.UserName}|{player1color}");
         }
         public static void watch(string RoomNo)
         {

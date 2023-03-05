@@ -18,6 +18,7 @@ namespace client
     public partial class Roomgame : Form
     {
         public static string RoomNo { get; set; }
+        string[] roomsData;
         public Roomgame()
         {
             InitializeComponent();
@@ -25,6 +26,7 @@ namespace client
         }
         private void button3_Click(object sender, EventArgs e) //CreateRoom
         {
+            RoomNo = roomsData.Length.ToString();
             Thread thr = new Thread(() => Application.Run(new CreateRoom()));
             thr.Start();
         }
@@ -34,7 +36,7 @@ namespace client
         }
         async private void button1_Click(object sender, EventArgs e) //show available rooms
         {
-            string[] roomsData = new string[10];
+            roomsData = new string[10];
             string[] room = new string[5];
             string data = await Connection.getReader().ReadLineAsync();
             roomsData = data.Split('&');
@@ -62,6 +64,7 @@ namespace client
             }
             button4.Enabled = true;
             button2.Enabled = true;
+            button3.Enabled = true;
         }
         private void button4_Click(object sender, EventArgs e)//watch
         {
@@ -90,12 +93,16 @@ namespace client
                 Thread thrToChooseColor = new Thread(() => Application.Run(new chooseColor("join")));
                 thrToChooseColor.Start();
             }
-            else
+            else if(int.Parse(listView1.Items[int.Parse(RoomNo) - 1].Text.Split(':')[2]) == 1)
             {
                 Connection.join(RoomNo);
                 Thread thr = new Thread(() => Application.Run(new gameBoard("player")));
                 thr.Start();
                 Connection.getWriter().WriteLine($"PlayersData|{start.UserName}");
+            }
+            else
+            {
+                MessageBox.Show("Invalid input");
             }
             Invalidate();
         }

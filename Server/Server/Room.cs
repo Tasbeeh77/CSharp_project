@@ -29,8 +29,8 @@ namespace Server
             this.player1Name = player1Name;
             this.row = row; 
             this.col = col;
-            this.player1Color = player1Color;
             player1.Color = player1Color;
+            this.player1Color = player1Color;
             this.roomIndex = roomIndex;
             players.Add(player1);
         }

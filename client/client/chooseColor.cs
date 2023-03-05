@@ -30,11 +30,17 @@ namespace client
             Thread thr = new Thread(() => Application.Run(new gameBoard("player")));
             thr.Start();
             if (sendAs== "createRoom")
+            {
                Connection.sendRoomData(Player1color);
+               Connection.getWriter().WriteLine($"PlayersData|{start.UserName}");
+            }
             else
-                Connection.join(Roomgame.RoomNo);
+            {
+               Connection.join(Roomgame.RoomNo,Player1color);
+               Connection.getWriter().WriteLine($"PlayersData|{start.UserName}");
+            }
+
             this.Close();
-            Connection.getWriter().WriteLine($"PlayersData|{start.UserName}");
         }
         private void button1_Click(object sender, EventArgs e)
         {
