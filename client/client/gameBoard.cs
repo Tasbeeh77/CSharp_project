@@ -66,52 +66,70 @@ namespace client
             {
                 if (Connection.getStream() != null)
                 {
-                    //string message = Connection.getReader().ReadLine();  
-                    while (!Connection.getReader().EndOfStream)
+                    string message = Connection.getReader().ReadLine();
+                    string[] x = message.Split('|');
+                    if (x[0] == "roomNumber")
                     {
-                        string message = Connection.getReader().ReadLine();
-                        string[] x = message.Split('|');
-                        if (x[0] == "roomNumber")
+                        roomNo = int.Parse(x[1]);
+                        MyNumber = int.Parse(x[3]);
+                        myColor = x[2];
+                    }
+                    if (x[0] == "Lose") //Lose|roomNo
+                    {
+                        string caption = "Loser";
+                        MessageBoxButtons buttons = MessageBoxButtons.YesNo;
+                        DialogResult result;
+                        result = MessageBox.Show("sorry You lose! Do you want play again?", caption, buttons);
+                        if (result == DialogResult.Yes)  //playAgain|winnerNo|roomNO
                         {
-                            roomNo = int.Parse(x[1]);
-                            MyNumber = int.Parse(x[3]);
-                            myColor = x[2];
+                            board = new int[6, 7];
+                            turn = 1;
+                            Invalidate();
                         }
-                        if (x[0] == "ChangePoint") //"pointChanged|row|col|color|turn"
+                        else
                         {
-                            if (x[3] == "red")
-                            {
-                                color = Color.Red;
-                            }
-                            else
-                            {
-                                color = Color.Yellow;
-                            }
-                            if (!label1.Text.Contains("Watcher"))
-                                turn = int.Parse(x[4]);
-                            ReDrawEllipse(int.Parse(x[1]), int.Parse(x[2]), color);
-                        }
-                        if (x[0] == "Lose") //Lose|roomNo
-                        {
-                            MessageBox.Show("You Lose");
-                        }
-                        if (x[0]== "acceptPlayAgain")
-                        {
-                            MessageBoxButtons buttons = MessageBoxButtons.YesNo;
-                            DialogResult result;
-                            result = MessageBox.Show($"Do you want to play again?","", buttons);
-                            if (result == DialogResult.Yes)  //playAgain|winnerNo|roomNO
-                            {
-                                Thread thr = new Thread(() => Application.Run(new gameBoard("player")));
-                                thr.Start();
-                                this.Close();
-                            }
-                            else
-                            {
-                                this.Close();
-                            }
+                            Connection.getWriter().WriteLine($"cancel|{MyNumber}|{Roomgame.RoomNo}");
+                            this.Close();
                         }
                     }
+                    if (x[0] == "ChangePoint") //"pointChanged|row|col|color|turn"
+                    {
+                        
+                        if (x[3] == "red")
+                        {
+                            color = Color.Red;
+                        }
+                        else
+                        {
+                            color = Color.Yellow;
+                        }
+                        if (!label1.Text.Contains("Watcher"))
+                            turn = int.Parse(x[4]);
+                        ReDrawEllipse(int.Parse(x[1]), int.Parse(x[2]), color);
+                    }
+                    if (x[0] == "acceptPlayAgain")
+                    {
+                        MessageBoxButtons buttons = MessageBoxButtons.YesNo;
+                        DialogResult result;
+                        result = MessageBox.Show($"Player{x[1]} wants to play again with you ?", "", buttons);
+                        if (result == DialogResult.Yes)  //playAgain|winnerNo|roomNO
+                        {
+                            Thread thr = new Thread(() => Application.Run(new gameBoard("player")));
+                            thr.Start();
+                            this.Close();
+                        }
+                        else
+                        {
+                            Connection.getWriter().WriteLine($"cancel|{MyNumber}|{Roomgame.RoomNo}");
+                            this.Close();
+                        }
+                    }
+                    if (x[0]== "GameEnded")
+                    {
+                        MessageBox.Show("The other player Ended the Game");
+                        this.Close();
+                    }
+                    Connection.getStream().Flush();
                 }
             }
         }
@@ -211,19 +229,16 @@ namespace client
                     if (winner != -1)
                     {
                         string player = (winner == 1) ? myColor : otherPlayerColor;
-                        MessageBox.Show("Congratulations!" + player + " Player has won");
-                        //sendReault|WinnerNo|roomNO
-                        Connection.getWriter().WriteLine($"sendReault|{MyNumber}|{Roomgame.RoomNo}");
-                        string caption = "Play Again";
+                        string caption = "Result";
                         MessageBoxButtons buttons = MessageBoxButtons.YesNo;
                         DialogResult result;
-                        result = MessageBox.Show("Do you want play again?", caption, buttons);
+                        result = MessageBox.Show("CongratulationsYou won! Do you want play again?", caption, buttons);
                         if (result == DialogResult.Yes)  //playAgain|winnerNo|roomNO
                         {
-                            Connection.getWriter().WriteLine($"playAgain|{MyNumber}|{Roomgame.RoomNo}");
-                            Thread thr = new Thread(() => Application.Run(new gameBoard("player")));
-                            thr.Start();
-                            this.Close();
+                            Connection.getWriter().WriteLine($"sendReault|{MyNumber}|{Roomgame.RoomNo}");
+                            board = new int[6, 7];
+                            turn = 1;
+                            Invalidate();
                         }
                         else
                         {

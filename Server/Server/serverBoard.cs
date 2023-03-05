@@ -140,15 +140,15 @@ namespace Server
                 if (int.Parse(streamData[1]) == 1)
                 { 
                     StreamWriter writer = new StreamWriter(availableRooms[roomNo - 1].players[1].nstream);
-                    writer.Flush();
                     writer.WriteLine($"acceptPlayAgain|{roomNo}|{int.Parse(streamData[1])}");
+                    writer.Flush();
                     HandleExceptionOnControls($"Player1 decided to play again in room {roomNo}", "listView1");
                 }
                 else
                 {
                     StreamWriter writer = new StreamWriter(availableRooms[roomNo - 1].players[0].nstream);
-                    writer.Flush();
                     writer.WriteLine($"acceptPlayAgain|{roomNo}|{int.Parse(streamData[1])}");
+                    writer.Flush();
                     HandleExceptionOnControls($"Player2 decided to play again in room {roomNo}", "listView1");
                 }
             }
@@ -167,8 +167,8 @@ namespace Server
                 if (int.Parse(streamData[1]) == 1)
                 {
                     StreamWriter writer = new StreamWriter(availableRooms[roomNo - 1].players[1].nstream);
-                    writer.Flush();
                     writer.WriteLine($"GameEnded|{roomNo}|{int.Parse(streamData[1])}");
+                    writer.Flush();
                     HandleExceptionOnControls($"Both players left The room {roomNo}", "listView1");
                     int player1ID = availableRooms[roomNo - 1].players[0].Id;
                     int player2ID = availableRooms[roomNo - 1].players[1].Id;
@@ -178,8 +178,8 @@ namespace Server
                 else
                 {
                     StreamWriter writer = new StreamWriter(availableRooms[roomNo - 1].players[0].nstream);
-                    writer.Flush();
                     writer.WriteLine($"GameEnded|{roomNo}|{int.Parse(streamData[1])}");
+                    writer.Flush();
                     HandleExceptionOnControls($"Both players left The room {roomNo}", "listView1");
                     int player1ID = availableRooms[roomNo - 1].players[0].Id;
                     int player2ID = availableRooms[roomNo - 1].players[1].Id;
@@ -199,14 +199,14 @@ namespace Server
             if (int.Parse(streamData[1]) == 1)
             {
                 StreamWriter writer = new StreamWriter(availableRooms[roomNo - 1].players[1].nstream);
-                writer.Flush();
                 writer.WriteLine($"Lose|{roomNo}"); //Lose|roomNo
+                writer.Flush();
             }
             else
             {
                 StreamWriter writer = new StreamWriter(availableRooms[roomNo - 1].players[0].nstream);
-                writer.Flush();
                 writer.WriteLine($"Lose|{roomNo}");
+                writer.Flush();
             }
             writeInFile(roomNo, int.Parse(streamData[1]));
             HandleExceptionOnControls($"Winner in room {roomNo} is player{streamData[1]}", "listView1");
