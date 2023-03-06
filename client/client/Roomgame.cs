@@ -1,28 +1,23 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.IO;
-using System.Linq;
-using System.Net.Sockets;
-using System.Net;
-using System.Runtime.InteropServices.ComTypes;
-using System.Text;
 using System.Threading;
-using System.Threading.Tasks;
 using System.Windows.Forms;
-using Newtonsoft.Json;
 namespace client
 {
     public partial class Roomgame : Form
     {
         public static string RoomNo { get; set; }
         string[] roomsData;
+        bool flag =true;
         public Roomgame()
         {
             InitializeComponent();
             RoomNo = "1";
+            /*Thread thread = new Thread(() => {
+                while(flag)
+                {
+                    if()
+                }
+            });*/
         }
         private void button3_Click(object sender, EventArgs e) //CreateRoom
         {

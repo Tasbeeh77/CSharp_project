@@ -61,6 +61,9 @@ namespace client
         public static void ClosingForm()
         {
             Writer.WriteLine($"Close|send");
+            Reader.Close();
+            Writer.Close();
+            nStream.Close();
         }
     }
 }

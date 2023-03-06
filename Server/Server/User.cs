@@ -1,19 +1,5 @@
-﻿
-using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Dynamic;
-using System.IO;
-using System.Linq;
-using System.Net;
-using System.Net.NetworkInformation;
+﻿using System.IO;
 using System.Net.Sockets;
-using System.Runtime.InteropServices.ComTypes;
-using System.Text;
-using System.Windows.Forms;
 using static System.Windows.Forms.VisualStyles.VisualStyleElement;
 
 namespace Server
@@ -22,7 +8,6 @@ namespace Server
     public class User
     {
         public event NewClientMessageHandeler newClientMessage;
-
         public int Id { get; set; }
         public string UserName { get; set; }
         public string Color { get; set; }
@@ -37,8 +22,8 @@ namespace Server
             userConnection = socket;
             nstream = new NetworkStream(userConnection); ;
             Writer = new StreamWriter(nstream);
-            Writer.AutoFlush = true;
             Reader = new StreamReader(nstream);
+            Writer.AutoFlush = true;
         }
         async protected virtual void ReadMessages()
         {
@@ -47,10 +32,8 @@ namespace Server
                 if(nstream!=null)
                 {
                     string value =await Reader.ReadLineAsync();
-                    //MessageBox.Show(value);
                     streamData = value.Split('|');
                     newClientMessage(this, Writer, Reader, streamData, userConnection); //publish event
-                    //MessageBox.Show(value+"after event");
                     nstream.Flush();
                 }
             }

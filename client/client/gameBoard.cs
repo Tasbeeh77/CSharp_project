@@ -1,13 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
 using System.Drawing;
-using System.Linq;
-using System.Runtime.InteropServices;
-using System.Text;
 using System.Threading;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace client
@@ -40,6 +33,8 @@ namespace client
         string myColor;
         string otherPlayerColor;
         bool flag = true;
+        int playerscount;
+        string playertype;
         public gameBoard(string playerType)
         {
             InitializeComponent();
@@ -52,6 +47,7 @@ namespace client
             thread = new Thread(new ThreadStart(PositionChanged));
             thread.Start();
             roomNo = int.Parse(Roomgame.RoomNo);
+            playertype = playerType;
             if(playerType=="watcher")
             {
                // this.Enabled= false;
@@ -73,10 +69,11 @@ namespace client
                         roomNo = int.Parse(x[1]);
                         MyNumber = int.Parse(x[3]);
                         myColor = x[2];
+                        playerscount = int.Parse(x[4]);
                     }
                     if (x[0] == "Lose") //Lose|roomNo
                     {
-                        string caption = "Loser";
+                        string caption = $"player{MyNumber} : {start.UserName}";
                         MessageBoxButtons buttons = MessageBoxButtons.YesNo;
                         DialogResult result;
                         result = MessageBox.Show("sorry You lose! Do you want play again?", caption, buttons);
@@ -128,6 +125,10 @@ namespace client
                     {
                         MessageBox.Show("The other player Ended the Game");
                         this.Close();
+                    }
+                    if (x[0]== "startGame")
+                    {
+                        playerscount = 2;
                     }
                     Connection.getStream().Flush();
                 }
@@ -190,63 +191,77 @@ namespace client
         }
         private void gameBoard_MouseClick(object sender, MouseEventArgs e)
         {
-            columnIndex = this.columnNumber(e.Location);
-            //MessageBox.Show("colindex"+columnIndex.ToString());
-            if (columnIndex != -1)
+            if (playerscount == 2)
             {
-                rowIndex = this.emptyRow(columnIndex);
-                if (rowIndex != -1)
+                if(playertype!= "watcher")
                 {
-                    this.board[rowIndex, columnIndex] = this.turn;
-                    if (turn == MyNumber)
+                    columnIndex = this.columnNumber(e.Location);
+                    //MessageBox.Show("colindex"+columnIndex.ToString());
+                    if (columnIndex != -1)
                     {
-                        if (myColor == "red")
+                        rowIndex = this.emptyRow(columnIndex);
+                        if (rowIndex != -1)
                         {
-                            color = Color.Red;
-                            otherPlayerColor = "Yellow";
-                        }
-                        else
-                        {
-                            color = Color.Yellow;
-                            otherPlayerColor = "Red";
-                        }
-                        drawEllipse(rowIndex, columnIndex, color);
-                        if (this.turn == 1)
-                        {
-                            this.turn = 2;
-                        }
-                        else
-                        {
-                            this.turn = 1;
-                        }
-                        Connection.getWriter().WriteLine($"pointChanged|{Roomgame.RoomNo}|{turn}|{rowIndex}|{columnIndex}");
-                    }
-                    else 
-                    {
-                        MessageBox.Show("Not your Turn");
-                    }
-                    int winner = this.Winner(MyNumber);
-                    if (winner != -1)
-                    {
-                        string player = (winner == 1) ? myColor : otherPlayerColor;
-                        string caption = "Result";
-                        MessageBoxButtons buttons = MessageBoxButtons.YesNo;
-                        DialogResult result;
-                        result = MessageBox.Show("CongratulationsYou won! Do you want play again?", caption, buttons);
-                        if (result == DialogResult.Yes)  //playAgain|winnerNo|roomNO
-                        {
-                            Connection.getWriter().WriteLine($"sendReault|{MyNumber}|{Roomgame.RoomNo}");
-                            board = new int[6, 7];
-                            turn = 1;
-                            Invalidate();
-                        }
-                        else
-                        {
-                            Connection.getWriter().WriteLine($"cancel|{MyNumber}|{Roomgame.RoomNo}");
-                            this.Close();
+                            this.board[rowIndex, columnIndex] = this.turn;
+                            if (turn == MyNumber)
+                            {
+                                if (myColor == "red")
+                                {
+                                    color = Color.Red;
+                                    otherPlayerColor = "Yellow";
+                                }
+                                else
+                                {
+                                    color = Color.Yellow;
+                                    otherPlayerColor = "Red";
+                                }
+                                if (this.turn == 1)
+                                {
+                                    this.turn = 2;
+                                }
+                                else
+                                {
+                                    this.turn = 1;
+                                }
+                                drawEllipse(rowIndex, columnIndex, color);
+                                Connection.getWriter().WriteLine($"pointChanged|{Roomgame.RoomNo}|{turn}|{rowIndex}|{columnIndex}");
+                            }
+                            else
+                            {
+                                MessageBox.Show("Not your Turn");
+                            }
+                            int winner = this.Winner(MyNumber);
+                            if (winner != -1)
+                            {
+                                string player = (winner == 1) ? myColor : otherPlayerColor;
+                                string caption = $"player{MyNumber} : {start.UserName}";
+                                MessageBoxButtons buttons = MessageBoxButtons.YesNo;
+                                DialogResult result;
+                                result = MessageBox.Show("Congratulations You won! Do you want play again?", caption, buttons);
+                                if (result == DialogResult.Yes)  //playAgain|winnerNo|roomNO
+                                {
+                                    Connection.getWriter().WriteLine($"sendReault|{MyNumber}|{Roomgame.RoomNo}");
+                                    board = new int[6, 7];
+                                    turn = 1;
+                                    Invalidate();
+                                }
+                                else
+                                {
+                                    Connection.getWriter().WriteLine($"cancel|{MyNumber}|{Roomgame.RoomNo}");
+                                    this.Close();
+                                }
+                            }
                         }
                     }
                 }
+                else
+                {
+                    MessageBox.Show("Your permission is watching only");
+                }
+            }
+            else
+            {
+                MessageBox.Show("Please wait for Player2 to join");
             }
         }
         private int columnNumber(Point mouse)

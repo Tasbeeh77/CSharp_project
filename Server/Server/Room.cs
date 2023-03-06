@@ -10,7 +10,6 @@ namespace Server
         public int col { get; set; }
         public string player1Color { get; set; }
         string player2Color;
-
         public int roomIndex { get; set; }
         public List<User> players = new List<User>();
         public List<User> watchers = new List<User>();
