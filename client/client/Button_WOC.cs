@@ -29,12 +29,12 @@ namespace client
             MouseEnter += (sender, e) =>
             {
                 _isHovering = true;
-                Invalidate();
+               // Invalidate();
             };
             MouseLeave += (sender, e) =>
             {
                 _isHovering = false;
-                Invalidate();
+              //  Invalidate();
             };
         }
         protected override void OnPaint(PaintEventArgs e)
@@ -85,7 +85,7 @@ namespace client
             set
             {
                 _onHoverBorderColor = value;
-                Invalidate();
+               // Invalidate();
             }
         }
         public Color ButtonColor
