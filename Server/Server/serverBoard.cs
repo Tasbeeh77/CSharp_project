@@ -56,7 +56,7 @@ namespace Server
             {
                 createRoomRequest(streamData);
             }
-            else if (streamData[0]=="join")
+            else if (streamData[0] == "join")
             {
                 joinGameRequest(streamData);
             }
@@ -68,15 +68,15 @@ namespace Server
             {
                 stopWatching(streamData);
             }
-            else if (streamData[0] == "PlayersData")
+            else if (streamData[0] == "UsersData")
             {
                 requestPlayersData(streamData, Writer);
             }
             else if (streamData[0] == "pointChanged")
             {
-                sendLocation(streamData,sender);
+                sendLocation(streamData, sender);
             }
-            else if(streamData[0] == "sendReault")
+            else if (streamData[0] == "sendReault")
             {
                 sendResultToPlayers(streamData);
             }
@@ -95,7 +95,7 @@ namespace Server
         }
         private void createDefaultRooms()
         {
-            Room room = new Room(1, 7, 6);
+            Room room = new Room(1, 6, 7);
             availableRooms.Add(room);
             HandleExceptionOnControls($"Room available count = {0}", "listView1");
         }
@@ -164,11 +164,10 @@ namespace Server
         {
             Room room = new Room(streamData[1], int.Parse(streamData[2]), int.Parse(streamData[3]), streamData[4], roomsCount++, users[users.Count - 1]);
             availableRooms.Add(room);
-            MessageBox.Show(streamData[3]);
             for (int i = 1; i < streamData.Length; i++)
             {
                 HandleExceptionOnControls($"Room Data = {streamData[i]}", "listView1");
-            }
+            }            
         }
         private void joinGameRequest(string[] streamData)
         {
@@ -232,8 +231,19 @@ namespace Server
                     {
                         if (availableRooms[i].players[j].UserName == streamData[1])
                         {
-                            //roomNumber|roomNo|red|playerNo|playersCount
-                            writer.WriteLine($"roomNumber|{availableRooms[i].roomIndex}|{availableRooms[i].players[j].Color}|{j + 1}|{availableRooms[i].players.Count}");
+                            //roomNumber|roomNo|red|playerNo|playersCount|row|col
+                            writer.WriteLine($"roomNumber|{availableRooms[i].roomIndex}|{availableRooms[i].players[j].Color}|{j + 1}|{availableRooms[i].players.Count}|{availableRooms[i].row}|{availableRooms[i].col}");
+                            break;
+                        }
+                    }
+                    for (int j = 0; j < availableRooms[i].watchers.Count; j++)
+                    {
+                        if (availableRooms[i].watchers[j].UserName == streamData[1])
+                        {
+                            //roomNumber|roomNo|red|playerNo|playersCount|row|col
+                            writer.WriteLine($"roomNumber|{availableRooms[i].roomIndex}|red|{j + 1}|{availableRooms[i].watchers.Count}|{availableRooms[i].row}|{availableRooms[i].col}");
+                            MessageBox.Show($"roomNumber|{availableRooms[i].roomIndex}|red|{j + 1}|{availableRooms[i].watchers.Count}|{availableRooms[i].row}|{availableRooms[i].col}");
+                            break;
                         }
                     }
                 }
@@ -305,22 +315,18 @@ namespace Server
                     StreamWriter writer = new StreamWriter(availableRooms[roomNo - 1].players[1].nstream);
                     writer.WriteLine($"GameEnded|{roomNo}|{int.Parse(streamData[1])}");
                     writer.Flush();
-                    HandleExceptionOnControls($"Both players left The room {roomNo}", "listView1");
-                    MessageBox.Show("users count" + users.Count);
+                    HandleExceptionOnControls($"Both players left room {roomNo}", "listView1");
                     availableRooms[roomNo - 1].players.RemoveAt(0);
                     availableRooms[roomNo - 1].players.RemoveAt(0);
-                    MessageBox.Show("room players count" + availableRooms[roomNo - 1].players.Count.ToString());
                 }
                 else
                 {
                     StreamWriter writer = new StreamWriter(availableRooms[roomNo - 1].players[0].nstream);
                     writer.WriteLine($"GameEnded|{roomNo}|{int.Parse(streamData[1])}");
                     writer.Flush();
-                    HandleExceptionOnControls($"Both players left The room {roomNo}", "listView1");
-                    MessageBox.Show("users count" + users.Count);
+                    HandleExceptionOnControls($"Both players left room {roomNo}", "listView1");
                     availableRooms[roomNo - 1].players.RemoveAt(0);
                     availableRooms[roomNo - 1].players.RemoveAt(0);
-                    MessageBox.Show("room players count"+availableRooms[roomNo - 1].players.Count.ToString());
                 }
             }
             catch (Exception ex)

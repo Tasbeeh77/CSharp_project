@@ -73,6 +73,7 @@ namespace client
                 Thread thrWatch = new Thread(() => Application.Run(new gameBoard("watcher")));
                 thrWatch.Start();
                 Connection.watch(RoomNo);
+                Connection.getWriter().WriteLine($"UsersData|{start.UserName}");
             }
         }
         private void button2_Click(object sender, EventArgs e) //join
@@ -93,7 +94,7 @@ namespace client
                 Connection.join(RoomNo);
                 Thread thr = new Thread(() => Application.Run(new gameBoard("player")));
                 thr.Start();
-                Connection.getWriter().WriteLine($"PlayersData|{start.UserName}");
+                Connection.getWriter().WriteLine($"UsersData|{start.UserName}");
             }
             else
             {

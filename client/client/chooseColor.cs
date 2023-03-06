@@ -22,12 +22,12 @@ namespace client
             if (sendAs== "createRoom")
             {
                Connection.sendRoomData(Player1color);
-               Connection.getWriter().WriteLine($"PlayersData|{start.UserName}");
+               Connection.getWriter().WriteLine($"UsersData|{start.UserName}");
             }
             else
             {
                Connection.join(Roomgame.RoomNo,Player1color);
-               Connection.getWriter().WriteLine($"PlayersData|{start.UserName}");
+               Connection.getWriter().WriteLine($"UsersData|{start.UserName}");
             }
 
             this.Close();

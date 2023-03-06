@@ -43,7 +43,7 @@
             this.button3.Enabled = false;
             this.button3.Font = new System.Drawing.Font("Microsoft Sans Serif", 16.2F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.button3.ForeColor = System.Drawing.SystemColors.ButtonFace;
-            this.button3.Location = new System.Drawing.Point(328, 376);
+            this.button3.Location = new System.Drawing.Point(303, 376);
             this.button3.Name = "button3";
             this.button3.Size = new System.Drawing.Size(226, 57);
             this.button3.TabIndex = 3;
@@ -53,13 +53,15 @@
             // 
             // button1
             // 
+            this.button1.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(192)))), ((int)(((byte)(64)))), ((int)(((byte)(0)))));
             this.button1.Font = new System.Drawing.Font("Microsoft Sans Serif", 16.2F, System.Drawing.FontStyle.Bold);
-            this.button1.Location = new System.Drawing.Point(627, 362);
+            this.button1.ForeColor = System.Drawing.SystemColors.ButtonFace;
+            this.button1.Location = new System.Drawing.Point(602, 376);
             this.button1.Name = "button1";
-            this.button1.Size = new System.Drawing.Size(248, 84);
+            this.button1.Size = new System.Drawing.Size(333, 57);
             this.button1.TabIndex = 4;
             this.button1.Text = "show available rooms";
-            this.button1.UseVisualStyleBackColor = true;
+            this.button1.UseVisualStyleBackColor = false;
             this.button1.Click += new System.EventHandler(this.button1_Click);
             // 
             // listView1
@@ -67,7 +69,7 @@
             this.listView1.HideSelection = false;
             this.listView1.Location = new System.Drawing.Point(294, 24);
             this.listView1.Name = "listView1";
-            this.listView1.Size = new System.Drawing.Size(420, 157);
+            this.listView1.Size = new System.Drawing.Size(420, 169);
             this.listView1.TabIndex = 5;
             this.listView1.UseCompatibleStateImageBehavior = false;
             this.listView1.View = System.Windows.Forms.View.List;
@@ -78,9 +80,9 @@
             this.button2.Enabled = false;
             this.button2.Font = new System.Drawing.Font("Microsoft Sans Serif", 16.2F, System.Drawing.FontStyle.Bold);
             this.button2.ForeColor = System.Drawing.SystemColors.ButtonHighlight;
-            this.button2.Location = new System.Drawing.Point(773, 89);
+            this.button2.Location = new System.Drawing.Point(774, 87);
             this.button2.Name = "button2";
-            this.button2.Size = new System.Drawing.Size(126, 58);
+            this.button2.Size = new System.Drawing.Size(126, 49);
             this.button2.TabIndex = 6;
             this.button2.Text = "Join";
             this.button2.UseVisualStyleBackColor = false;
@@ -94,7 +96,7 @@
             this.button4.ForeColor = System.Drawing.SystemColors.ButtonHighlight;
             this.button4.Location = new System.Drawing.Point(773, 163);
             this.button4.Name = "button4";
-            this.button4.Size = new System.Drawing.Size(127, 59);
+            this.button4.Size = new System.Drawing.Size(127, 47);
             this.button4.TabIndex = 7;
             this.button4.Text = "Watch";
             this.button4.UseVisualStyleBackColor = false;
@@ -102,9 +104,10 @@
             // 
             // textBox1
             // 
-            this.textBox1.Location = new System.Drawing.Point(743, 47);
+            this.textBox1.Location = new System.Drawing.Point(743, 24);
+            this.textBox1.Multiline = true;
             this.textBox1.Name = "textBox1";
-            this.textBox1.Size = new System.Drawing.Size(192, 22);
+            this.textBox1.Size = new System.Drawing.Size(192, 45);
             this.textBox1.TabIndex = 8;
             // 
             // Roomgame

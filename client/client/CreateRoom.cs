@@ -25,8 +25,8 @@ namespace client
             Thread thr = new Thread(() => Application.Run(new chooseColor("createRoom")));
             thr.Start();
             this.Close();
-            Row = 7;
-            Col = 6;
+            Row = 6;
+            Col = 7;
         }
 
         private void button2_Click(object sender, EventArgs e)
@@ -34,16 +34,16 @@ namespace client
             Thread thr = new Thread(() => Application.Run(new chooseColor("createRoom")));
             thr.Start();
             this.Close();
-            Row = 8;
-            Col = 7;
+            Row = 7;
+            Col = 8;
         }
         private void button3_Click(object sender, EventArgs e)
         {
             Thread thr = new Thread(() => Application.Run(new chooseColor("createRoom")));
             thr.Start();
             this.Close();
-            Row = 9;
-            Col = 7;
+            Row = 7;
+            Col = 9;
         }
     }
 }
