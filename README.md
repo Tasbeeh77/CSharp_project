@@ -5,4 +5,4 @@
 #### If a room is full other users can join it as spectators and watch the ongoing game also they can leave watching any time
 #### After the game end players have two options -> play again in the same room or leaving room and choose another one
 #### Data of the game ( players name, winner, Date, RoomNo ) are written in a text file on your PC
-#### [To preview game click here](https://github.com/Tasbeeh77/ITI_projects/tree/main/C%23_Connect4Game/Screenshots) 
+#### [To preview game screenshots click here](https://github.com/Tasbeeh77/ITI_projects/tree/main/C%23_Connect4Game/Screenshots) 
